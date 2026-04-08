@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<!-- saved from url=(0136)https://agent.doubao.com.cn/obj/eden-cn/upnbsw-tss/ljhwZthlaukjlkulzlp/supertask_webview/42115812012867586/reconciliation_web/index.html -->
+<!-- saved from url=(0053)https://fengtaowu6-lab.github.io/reconciliation-tool/ -->
 <html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>来货智能对账系统 V3.0</title>
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-    <link href="./css2" rel="stylesheet">
-    <script src="./xlsx.full.min.js.下载"></script>
+    <link href="./1_files/css2" rel="stylesheet">
+    <script src="./1_files/xlsx.full.min.js.下载"></script>
     <style>
         * {
             margin: 0;
@@ -17,8 +17,10 @@
         :root {
             --primary: #10B981;
             --primary-dark: #059669;
-            --success: #10B981;
-            --danger: #EF4444;
+            --success: #08a06e;
+            --success-light: #e8f4f1;
+            --danger: #d81e06;
+            --gray-hint: #b8b8b8;
             --warning: #F59E0B;
             --warning-light: #FEF3C7;
             --warning-border: #FCD34D;
@@ -275,24 +277,42 @@
             background: rgba(16, 185, 129, 0.08);
             transform: scale(1.01);
         }
+        /* 上传成功状态 - 新样式 */
         .upload-zone.success {
-            border-color: var(--success);
+            border-color: #08a06e;
             border-style: solid;
-            background: rgba(16, 185, 129, 0.05);
+            background: #08a06e;
+        }
+        .upload-zone.success .icon svg {
+            stroke: #ffffff !important;
+        }
+        .upload-zone.success .title {
+            color: #ffffff;
+        }
+        .upload-zone.success .subtitle {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .upload-zone.success .file-name {
+            color: rgba(255, 255, 255, 0.9);
         }
         .upload-zone .icon {
             font-size: 36px;
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .upload-zone .title {
             font-size: 14px;
             font-weight: 600;
             color: var(--gray-700);
             margin-bottom: 4px;
+            transition: color 0.3s ease;
         }
         .upload-zone .subtitle {
             font-size: 12px;
             color: var(--gray-400);
+            transition: color 0.3s ease;
         }
         .upload-zone .file-name {
             font-size: 11px;
@@ -301,6 +321,7 @@
             margin-top: 8px;
             word-break: break-all;
             display: none;
+            transition: color 0.3s ease;
         }
         .upload-zone.success .file-name {
             display: block;
@@ -311,13 +332,14 @@
             right: 8px;
             width: 22px;
             height: 22px;
-            background: var(--success);
+            background: #ffffff;
             border-radius: 50%;
             display: none;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: #08a06e;
             font-size: 12px;
+            font-weight: bold;
         }
         .upload-zone.success .check-icon {
             display: flex;
@@ -383,97 +405,67 @@
             transition: width 0.5s ease;
             width: 0%;
         }
-        /* 结果区域 */
-        .result-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            text-align: center;
+        /* 新核对结果卡片样式 */
+        .result-card {
+            background: #e8f4f1;
+            border: 1px solid rgba(8, 160, 110, 0.2);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: all 0.3s ease;
         }
-        .result-item {
-            padding: 14px 8px;
+        .result-card:last-child {
+            margin-bottom: 0;
         }
-        .result-circle {
-            width: 56px;
-            height: 56px;
+        .result-card-icon {
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            margin: 0 auto 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
-            transition: all 0.3s ease;
+            flex-shrink: 0;
         }
-        .result-circle.pending {
-            background: var(--gray-100);
-            color: var(--gray-400);
+        .result-card-icon.success {
+            background: rgba(8, 160, 110, 0.15);
         }
-        .result-circle.success {
-            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
-            color: var(--success);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        .result-card-icon.error {
+            background: rgba(216, 30, 6, 0.15);
         }
-        .result-circle.error {
-            background: linear-gradient(135deg, #FEE2E2, #FECACA);
-            color: var(--danger);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+        .result-card-content {
+            flex: 1;
         }
-        .result-label {
-            font-size: 13px;
+        .result-card-title {
+            font-size: 14px;
             font-weight: 600;
-            color: var(--gray-700);
+            color: var(--gray-800);
             margin-bottom: 3px;
         }
-        .result-status {
-            font-size: 11px;
-            color: var(--gray-400);
-        }
-        .result-status.success {
-            color: var(--success);
-        }
-        .result-status.error {
-            color: var(--danger);
-        }
-        /* 错误列表 */
-        .error-list {
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        .error-list::-webkit-scrollbar {
-            width: 4px;
-        }
-        .error-list::-webkit-scrollbar-thumb {
-            background: var(--gray-300);
-            border-radius: 2px;
-        }
-        .error-item {
-            background: #FEF2F2;
-            color: #991B1B;
-            padding: 10px 14px;
-            border-radius: var(--radius-sm);
-            margin-bottom: 8px;
+        .result-card-hint {
             font-size: 12px;
-            line-height: 1.5;
+            color: #b8b8b8;
         }
-        .error-item:last-child {
-            margin-bottom: 0;
+        .result-card-status {
+            text-align: right;
+            flex-shrink: 0;
         }
-        /* 成功信息 */
-        .success-info {
-            background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
-            border-radius: var(--radius-md);
-            padding: 18px;
-            text-align: center;
+        .result-card-status-icon {
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: flex-end;
         }
-        .success-info .amount {
-            font-size: 26px;
-            font-weight: 700;
-            color: #065F46;
-            margin-bottom: 6px;
-        }
-        .success-info .desc {
+        .result-card-status-text {
             font-size: 13px;
-            color: #047857;
+            font-weight: 600;
+        }
+        .result-card-status-text.success {
+            color: #08a06e;
+        }
+        .result-card-status-text.error {
+            color: #d81e06;
         }
         /* 按钮 */
         .btn-group {
@@ -517,14 +509,15 @@
             background: var(--gray-50);
             border-color: var(--gray-300);
         }
-        .btn-export {
-            background: linear-gradient(135deg, var(--warning), #FBBF24);
-            color: white;
-            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+        /* 下载按钮 */
+        .btn-download {
+            background: #08a06e;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(8, 160, 110, 0.35);
         }
-        .btn-export:hover:not(:disabled) {
+        .btn-download:hover:not(:disabled) {
             transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(245, 158, 11, 0.45);
+            box-shadow: 0 6px 18px rgba(8, 160, 110, 0.45);
         }
         /* 隐藏/显示 */
         .hidden {
@@ -567,12 +560,34 @@
     <div class="container">
         <!-- 标题栏 -->
         <div class="header">
-            <div class="logo">📊</div>
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <line x1="10" y1="9" x2="8" y2="9"/>
+                </svg>
+            </div>
             <div class="header-title">
                 <h1>来货智能对账系统<span class="version">V3.0</span></h1>
                 <div class="header-subtitle">AI 智能核对 · 精准高效</div>
             </div>
-            <button class="config-btn" onclick="toggleConfig()">⚙️ API配置</button>
+            <button class="config-btn" onclick="toggleConfig()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;">
+                    <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16Z"/>
+                    <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z"/>
+                    <path d="M12 2v2"/>
+                    <path d="M12 20v2"/>
+                    <path d="m4.93 4.93 1.41 1.41"/>
+                    <path d="m17.66 17.66 1.41 1.41"/>
+                    <path d="M2 12h2"/>
+                    <path d="M20 12h2"/>
+                    <path d="m6.34 17.66-1.41 1.41"/>
+                    <path d="m19.07 4.93-1.41 1.41"/>
+                </svg>
+                API配置
+            </button>
         </div>
 
         <!-- 配置面板 -->
@@ -591,7 +606,7 @@
         </div>
 
         <!-- 提示条 -->
-        <div class="notice-bar show" id="noticeBar">
+        <div class="notice-bar" id="noticeBar">
             <strong>🎯 当前未配置API</strong>
             请先点击右上角的「API配置」填写您的火山方舟API信息，才能使用AI图片分析功能
         </div>
@@ -599,13 +614,24 @@
         <!-- 上传区域 -->
         <div class="card">
             <div class="card-title">
-                <span class="icon">📁</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px; color: var(--warning);">
+                    <path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/>
+                </svg>
                 上传对账文件
             </div>
             <div class="upload-grid">
                 <div class="upload-zone" id="excelZone" onclick="document.getElementById(&#39;excelInput&#39;).click()">
                     <div class="check-icon">✓</div>
-                    <div class="icon">📊</div>
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <path d="M8 13h2"/>
+                            <path d="M8 17h2"/>
+                            <path d="M14 13h2"/>
+                            <path d="M14 17h2"/>
+                        </svg>
+                    </div>
                     <div class="title">上传到货表格</div>
                     <div class="subtitle">支持 .xlsx / .csv</div>
                     <div class="file-name" id="excelFileName"></div>
@@ -613,7 +639,13 @@
                 </div>
                 <div class="upload-zone" id="imageZone" onclick="document.getElementById(&#39;imageInput&#39;).click()">
                     <div class="check-icon">✓</div>
-                    <div class="icon">🖼️</div>
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                            <circle cx="9" cy="9" r="2"/>
+                            <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                        </svg>
+                    </div>
                     <div class="title">上传来货图片</div>
                     <div class="subtitle">支持 .jpg / .png</div>
                     <div class="file-name" id="imageFileName"></div>
@@ -625,7 +657,12 @@
         <!-- 进度区域 -->
         <div class="card" id="progressCard">
             <div class="card-title">
-                <span class="icon">⏳</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px; color: var(--warning);">
+                    <path d="M5 22h14"/>
+                    <path d="M5 2h14"/>
+                    <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
+                    <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
+                </svg>
                 核对进度
             </div>
             <div class="progress-section">
@@ -643,7 +680,7 @@
                     <span class="percent" id="progressPercent">0%</span>
                 </div>
                 <div class="progress-info">
-                    <div class="progress-status" id="progressStatus">请先完成API配置</div>
+                    <div class="progress-status" id="progressStatus">等待上传文件...</div>
                     <div class="progress-bar">
                         <div class="fill" id="progressFill" style="width: 0%;"></div>
                     </div>
@@ -654,46 +691,64 @@
         <!-- 结果区域 -->
         <div class="card hidden" id="resultCard">
             <div class="card-title">
-                <span class="icon">📊</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px; color: var(--warning);">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
                 核对结果
             </div>
-            <div class="result-grid">
-                <div class="result-item">
-                    <div class="result-circle pending" id="amountCircle">?</div>
-                    <div class="result-label">总金额</div>
-                    <div class="result-status" id="amountStatus">待核实</div>
+            <!-- 商品总价 -->
+            <div class="result-card" id="amountResultCard">
+                <div class="result-card-icon" id="amountIcon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#08a06e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
                 </div>
-                <div class="result-item">
-                    <div class="result-circle pending" id="qtyCircle">?</div>
-                    <div class="result-label">数量</div>
-                    <div class="result-status" id="qtyStatus">待核实</div>
+                <div class="result-card-content">
+                    <div class="result-card-title">商品总价</div>
+                    <div class="result-card-hint" id="amountHint">AI识别 vs 表格金额</div>
                 </div>
-                <div class="result-item">
-                    <div class="result-circle pending" id="priceCircle">?</div>
-                    <div class="result-label">单款总价</div>
-                    <div class="result-status" id="priceStatus">待核实</div>
+                <div class="result-card-status">
+                    <div class="result-card-status-icon" id="amountStatusIcon"></div>
+                    <div class="result-card-status-text" id="amountStatusText">待核实</div>
                 </div>
             </div>
-        </div>
-
-        <!-- 错误列表 -->
-        <div class="card hidden" id="errorCard">
-            <div class="card-title">
-                <span class="icon">⚠️</span>
-                差异明细
+            <!-- 商品数量 -->
+            <div class="result-card" id="qtyResultCard">
+                <div class="result-card-icon" id="qtyIcon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#08a06e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </div>
+                <div class="result-card-content">
+                    <div class="result-card-title">商品数量</div>
+                    <div class="result-card-hint" id="qtyHint">AI识别 vs 表格数量</div>
+                </div>
+                <div class="result-card-status">
+                    <div class="result-card-status-icon" id="qtyStatusIcon"></div>
+                    <div class="result-card-status-text" id="qtyStatusText">待核实</div>
+                </div>
             </div>
-            <div class="error-list" id="errorList"></div>
-        </div>
-
-        <!-- 成功信息 -->
-        <div class="card hidden" id="successCard">
-            <div class="card-title">
-                <span class="icon">🎉</span>
-                核对完成
-            </div>
-            <div class="success-info">
-                <div class="amount" id="finalAmount">¥0.00</div>
-                <div class="desc" id="finalDesc">所有商品核对一致</div>
+            <!-- 商品单价 -->
+            <div class="result-card" id="priceResultCard">
+                <div class="result-card-icon" id="priceIcon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#08a06e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                </div>
+                <div class="result-card-content">
+                    <div class="result-card-title">单款总价</div>
+                    <div class="result-card-hint" id="priceHint">AI识别 vs 表格单价</div>
+                </div>
+                <div class="result-card-status">
+                    <div class="result-card-status-icon" id="priceStatusIcon"></div>
+                    <div class="result-card-status-text" id="priceStatusText">待核实</div>
+                </div>
             </div>
         </div>
 
@@ -701,10 +756,21 @@
         <div class="card">
             <div class="btn-group">
                 <button class="btn btn-secondary" id="resetBtn" onclick="resetAll()">
-                    ↺ 核算下一批
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                        <path d="M21 3v5h-5"/>
+                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                        <path d="M8 16H3v5"/>
+                    </svg>
+                    核算下一批
                 </button>
-                <button class="btn btn-export hidden" id="exportBtn" onclick="exportErrors()">
-                    📥 导出差异报告
+                <button class="btn btn-download hidden" id="downloadBtn" onclick="exportReport()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    点击下载详细对账报告
                 </button>
                 <button class="btn btn-primary" id="startBtn" onclick="startCalculate()" disabled="">
                     开始核算
@@ -722,8 +788,8 @@
         let tableSummary = null;
         let tableTotal = 0;
         let imageFile = null;
-        let currentErrors = [];
-        let imageTotal = 0;
+        let reconciliationData = [];
+        let hasErrors = false;
 
         // 智能切片分级上限
         const MAX_SLICES = 32;
@@ -1066,7 +1132,7 @@
             1. 提取最末尾的"本单欠款"或"合计"金额。
             2. 提取所有的商品明细，列出：款号、数量、总金额。
             ⚠️【严禁幻觉的提取规则】：
-            - 【款号】：必须是4位或5位的纯数字，且必须以数字"7"或者"8"开头！其余文字一律忽略。
+            - 【款号】：必须是4位或5位的纯数字，且必须以数字"7"或者"8"“9”开头！其余文字一律忽略。
             - 【数量与金额】：图片上的明细严格遵循公式格式，例如"55元 × 1件= ￥ 55"。务必且只能从这个算式中提取数字，绝对不要自己做乘法！
             请务必只输出合法的 JSON 字符串，格式如下：
             {"总计": 11008.0, "明细": [{"款号": "8851", "数量": 3, "总金额": 120.0}]}
@@ -1127,75 +1193,113 @@
             throw new Error(`大模型请求重试${maxRetries}次均失败: ${lastExc.message}`);
         }
 
-        // 更新状态圆圈
-        function updateStatusCircle(type, isOk) {
-            const circle = document.getElementById(type + 'Circle');
-            const status = document.getElementById(type + 'Status');
+        // 更新结果卡片
+        function updateResultCard(type, isOk, hintText) {
+            const icon = document.getElementById(type + 'Icon');
+            const statusIcon = document.getElementById(type + 'StatusIcon');
+            const statusText = document.getElementById(type + 'StatusText');
+            const hint = document.getElementById(type + 'Hint');
             
-            circle.classList.remove('pending', 'success', 'error');
+            // 更新图标颜色
+            const iconSvg = icon.querySelector('svg');
             
             if (isOk === true) {
-                circle.classList.add('success');
-                circle.textContent = '✓';
-                status.textContent = '一致';
-                status.className = 'result-status success';
+                icon.classList.remove('error');
+                icon.classList.add('success');
+                iconSvg.style.stroke = '#08a06e';
+                statusIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#08a06e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+                statusText.textContent = '一致';
+                statusText.className = 'result-card-status-text success';
             } else if (isOk === false) {
-                circle.classList.add('error');
-                circle.textContent = '✗';
-                status.textContent = '不一致';
-                status.className = 'result-status error';
+                icon.classList.remove('success');
+                icon.classList.add('error');
+                iconSvg.style.stroke = '#d81e06';
+                statusIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d81e06" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+                statusText.textContent = '错误';
+                statusText.className = 'result-card-status-text error';
             } else {
-                circle.classList.add('pending');
-                circle.textContent = '?';
-                status.textContent = '待核实';
-                status.className = 'result-status';
+                icon.classList.remove('success', 'error');
+                statusIcon.innerHTML = '';
+                statusText.textContent = '待核实';
+                statusText.className = 'result-card-status-text';
+            }
+            
+            if (hintText) {
+                hint.textContent = hintText;
             }
         }
 
         // 显示结果
-        function displayResult(imageTotalDue, imageSummary, errors) {
+        function displayResult(imageTotalDue, imageSummary, reconciliationList) {
             const resultCard = document.getElementById('resultCard');
-            const errorCard = document.getElementById('errorCard');
-            const successCard = document.getElementById('successCard');
-            const exportBtn = document.getElementById('exportBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
             
             resultCard.classList.remove('hidden');
             
             let hasQtyError = false;
             let hasAmtError = false;
+            hasErrors = false;
             
-            errors.forEach(err => {
-                if (err.includes('数量不一致') || err.includes('款号匹配失败')) {
-                    hasQtyError = true;
+            // 遍历对账结果，检查是否有错误
+            for (const item of reconciliationList) {
+                if (item.hasError) {
+                    hasErrors = true;
+                    if (item.errorType === 'qty' || item.errorType === 'both') {
+                        hasQtyError = true;
+                    }
+                    if (item.errorType === 'amount' || item.errorType === 'both' || item.errorType === 'missing') {
+                        hasAmtError = true;
+                    }
                 }
-                if (err.includes('金额不一致') || err.includes('款号匹配失败')) {
-                    hasAmtError = true;
-                }
-            });
+            }
             
             const totalMatches = Math.abs(imageTotalDue - tableTotal) < 1.0;
             
             // 更新卡片状态
-            updateStatusCircle('amount', totalMatches);
-            updateStatusCircle('qty', !hasQtyError);
-            updateStatusCircle('price', !hasAmtError);
+            updateResultCard('amount', totalMatches, `¥${imageTotalDue.toFixed(2)} vs ¥${tableTotal.toFixed(2)}`);
+            updateResultCard('qty', !hasQtyError, hasQtyError ? '存在数量差异' : 'AI识别 vs 表格数量');
+            updateResultCard('price', !hasAmtError, hasAmtError ? '存在金额差异' : 'AI识别 vs 表格单价');
             
-            // 显示错误或成功
-            if (errors.length > 0) {
-                errorCard.classList.remove('hidden');
-                const errorList = document.getElementById('errorList');
-                errorList.innerHTML = errors.map(err => 
-                    `<div class="error-item">• ${err}</div>`
-                ).join('');
-                successCard.classList.add('hidden');
-                exportBtn.classList.remove('hidden');
+            // 显示下载按钮
+            downloadBtn.classList.remove('hidden');
+        }
+
+        // 导出报告
+        function exportReport() {
+            const date = new Date();
+            const dateStr = `${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,'0')}${date.getDate().toString().padStart(2,'0')}_${date.getHours().toString().padStart(2,'0')}${date.getMinutes().toString().padStart(2,'0')}`;
+            
+            let rows = [];
+            
+            if (!hasErrors) {
+                // 数据全部一致
+                rows.push("对账结果：所有数据一致");
+                rows.push("");
+                rows.push("表格单价/总价/数量和供应商开单一致");
             } else {
-                errorCard.classList.add('hidden');
-                successCard.classList.remove('hidden');
-                document.getElementById('finalAmount').textContent = '¥' + imageTotalDue.toLocaleString('zh-CN', { minimumFractionDigits: 2 });
-                document.getElementById('finalDesc').textContent = `${Object.keys(imageSummary).length} 款商品全部核对一致`;
-                exportBtn.classList.add('hidden');
+                // 数据有误
+                rows.push("款号,表格数量,表格单价,供应商开单数量,供应商开单价格");
+                
+                for (const item of reconciliationList) {
+                    if (item.hasError) {
+                        const tblUnitPrice = item.tblQty > 0 ? (item.tblAmount / item.tblQty).toFixed(2) : '0.00';
+                        const imgUnitPrice = item.imgQty > 0 ? (item.imgAmount / item.imgQty).toFixed(2) : '0.00';
+                        rows.push(`${item.code},${item.tblQty},${tblUnitPrice},${item.imgQty},${imgUnitPrice}`);
+                    }
+                }
             }
+            
+            const csvContent = "\uFEFF" + rows.join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `对账报告_${dateStr}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showToast('报告导出成功');
         }
 
         // 开始计算
@@ -1206,15 +1310,14 @@
             }
             
             const startBtn = document.getElementById('startBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
             startBtn.disabled = true;
             startBtn.innerHTML = '<span class="loading"></span> 核算中...';
+            downloadBtn.classList.add('hidden');
             
             try {
                 // 重置结果
                 document.getElementById('resultCard').classList.add('hidden');
-                document.getElementById('errorCard').classList.add('hidden');
-                document.getElementById('successCard').classList.add('hidden');
-                document.getElementById('exportBtn').classList.add('hidden');
                 
                 updateProgress(5, '正在读取表格数据...');
                 await new Promise(r => setTimeout(r, 100));
@@ -1252,100 +1355,78 @@
                 
                 updateProgress(80, '数据采集完毕，正在逐款核对...');
                 
-                // 对账
-                const errors = [];
+                // 对账结果列表
+                reconciliationList = [];
                 
+                // 遍历图片数据与表格对比
                 for (const [code, imgData] of Object.entries(combinedImageData)) {
                     const imgQty = imgData.数量;
                     const imgAmount = imgData.金额;
+                    let hasError = false;
+                    let errorType = '';
                     
                     if (!tableSummary[code]) {
-                        errors.push(`【款号匹配失败】原因为：表格中未找到款号 ${code}。`);
-                        continue;
-                    }
-                    
-                    const tblData = tableSummary[code];
-                    const tblQty = tblData.数量;
-                    const tblAmount = tblData.结算金额;
-                    
-                    if (tblQty !== imgQty) {
-                        errors.push(`【数量不一致】款号 ${code}：AI识别数量=${Math.round(imgQty)}，表格数量=${Math.round(tblQty)}。`);
-                    }
-                    
-                    if (Math.abs(tblAmount - imgAmount) > 0.1) {
-                        const unitPriceImg = imgQty > 0 ? Math.round(imgAmount / imgQty * 100) / 100 : 0;
-                        const unitPriceTbl = tblQty > 0 ? Math.round(tblAmount / tblQty * 100) / 100 : 0;
-                        errors.push(`【金额不一致】款号 ${code}：AI识别金额=${imgAmount}（单价=${unitPriceImg}），表格金额=${tblAmount}（单价=${unitPriceTbl}）。`);
+                        hasError = true;
+                        errorType = 'missing';
+                    } else {
+                        const tblData = tableSummary[code];
+                        const tblQty = tblData.数量;
+                        const tblAmount = tblData.结算金额;
+                        
+                        if (Math.round(tblQty) !== Math.round(imgQty)) {
+                            hasError = true;
+                            errorType = errorType ? 'both' : 'qty';
+                        }
+                        
+                        if (Math.abs(tblAmount - imgAmount) > 0.1) {
+                            hasError = true;
+                            errorType = errorType ? 'both' : 'amount';
+                        }
+                        
+                        reconciliationList.push({
+                            code: code,
+                            tblQty: tblQty,
+                            tblAmount: tblAmount,
+                            imgQty: imgQty,
+                            imgAmount: imgAmount,
+                            hasError: hasError,
+                            errorType: errorType
+                        });
                     }
                 }
                 
-                // 保存全局数据
-                currentErrors = errors;
-                imageTotal = imageTotalDue;
+                // 检查表格中是否有图片中未找到的款号
+                for (const [code, tblData] of Object.entries(tableSummary)) {
+                    if (!combinedImageData[code]) {
+                        reconciliationList.push({
+                            code: code,
+                            tblQty: tblData.数量,
+                            tblAmount: tblData.结算金额,
+                            imgQty: 0,
+                            imgAmount: 0,
+                            hasError: true,
+                            errorType: 'missing'
+                        });
+                    }
+                }
                 
                 updateProgress(100, '核对完成！');
                 
                 // 显示结果
-                displayResult(imageTotalDue, combinedImageData, errors);
+                displayResult(imageTotalDue, combinedImageData, reconciliationList);
                 
                 startBtn.innerHTML = '✓ 核算完成';
                 startBtn.classList.remove('btn-primary');
-                startBtn.classList.add('btn-success');
+                startBtn.classList.add('btn-download');
+                startBtn.disabled = false;
+                startBtn.onclick = null;
                 
             } catch (e) {
                 showToast('处理失败：' + e.message);
                 startBtn.disabled = false;
                 startBtn.innerHTML = '开始核算';
+                startBtn.classList.add('btn-primary');
             }
-        }
-
-        // 导出报告
-        function exportErrors() {
-            if (!currentErrors || currentErrors.length === 0) {
-                showToast('没有差异数据可导出');
-                return;
-            }
-            
-            // 生成CSV
-            const rows = [];
-            rows.push("款号,差异类型,AI识别数量,表格数量,数量差值,AI识别金额,表格金额,金额差值,AI识别单价,表格单价");
-            
-            for (const line of currentErrors) {
-                const qtyMatch = line.match(/【数量不一致】款号\s*(\S+)：AI识别数量=(\d+)，表格数量=(\d+)/);
-                const amtMatch = line.match(/【金额不一致】款号\s*(\S+)：AI识别金额=([\d.]+)（单价=([\d.]+)），表格金额=([\d.]+)（单价=([\d.]+)）/);
-                const failMatch = line.match(/【款号匹配失败】原因为：表格中未找到款号\s*(\S+)/);
-                
-                if (qtyMatch) {
-                    const code = qtyMatch[1];
-                    const imgQty = parseInt(qtyMatch[2]);
-                    const tblQty = parseInt(qtyMatch[3]);
-                    rows.push(`${code},数量不一致,${imgQty},${tblQty},${imgQty - tblQty},,,,,,`);
-                } else if (amtMatch) {
-                    const code = amtMatch[1];
-                    const imgAmt = parseFloat(amtMatch[2]);
-                    const imgUnit = parseFloat(amtMatch[3]);
-                    const tblAmt = parseFloat(amtMatch[4]);
-                    const tblUnit = parseFloat(amtMatch[5]);
-                    rows.push(`${code},金额不一致,,,,-,${imgAmt},${tblAmt},${(imgAmt - tblAmt).toFixed(2)},${imgUnit},${tblUnit}`);
-                } else if (failMatch) {
-                    const code = failMatch[1];
-                    rows.push(`${code},款号匹配失败,,,,,,,,,`);
-                }
-            }
-            
-            const csvContent = "\uFEFF" + rows.join("\n");
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            const date = new Date();
-            const dateStr = `${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,'0')}${date.getDate().toString().padStart(2,'0')}_${date.getHours().toString().padStart(2,'0')}${date.getMinutes().toString().padStart(2,'0')}`;
-            a.download = `对账差异报告_${dateStr}.csv`;
-            a.click();
-            URL.revokeObjectURL(url);
-            
-            showToast('差异报告导出成功');
         }
 
         // 重置
@@ -1363,13 +1444,12 @@
             tableSummary = null;
             tableTotal = 0;
             imageFile = null;
-            currentErrors = [];
+            reconciliationList = [];
+            hasErrors = false;
             
             // 隐藏结果
             document.getElementById('resultCard').classList.add('hidden');
-            document.getElementById('errorCard').classList.add('hidden');
-            document.getElementById('successCard').classList.add('hidden');
-            document.getElementById('exportBtn').classList.add('hidden');
+            document.getElementById('downloadBtn').classList.add('hidden');
             
             // 重置进度
             updateProgress(0, '等待上传文件...');
@@ -1378,8 +1458,9 @@
             const startBtn = document.getElementById('startBtn');
             startBtn.disabled = true;
             startBtn.innerHTML = '开始核算';
-            startBtn.classList.remove('btn-success');
+            startBtn.classList.remove('btn-download');
             startBtn.classList.add('btn-primary');
+            startBtn.onclick = startCalculate;
             
             checkReady();
         }
@@ -1395,6 +1476,7 @@
             checkReady();
         };
     </script>
+
 
 
 </body></html>
